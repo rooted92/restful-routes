@@ -3,11 +3,13 @@ const app = express();
 const path = require('path');
 // We extracted the v4 method from uuid and aliased it to uuid. This is the same as writing const uuid = require('uuid').v4;
 const { v4: uuid } = require('uuid');
+const methodOverride = require('method-override');
 
 // urlencoded says, anytime a request comes in with urlencoded data, go ahead and parse it for me. Like from a form.
 app.use(express.urlencoded({ extended: true }));
 // json() is a method that is going to parse any incoming JSON data.
 app.use(express.json());
+app.use(methodOverride('_method'));
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
@@ -59,12 +61,12 @@ app.get('/comments/:id', (req, res) => {
 
 // A patch request will update one part of a resource, whereas a put request will replace the entire resource.
 app.patch('/comments/:id', (req, res) => {
-    res.send('PATCH!!!');
     const { id } = req.params;
     const foundComment = comments.find(c => c.id === id);
     const newCommentText = req.body.comment;
     // We update the found comments' comment property to be the new comment text.
     foundComment.comment = newCommentText;
+    res.redirect('/comments');
 });
 
 app.get('/comments/:id/edit', (req, res) => {
