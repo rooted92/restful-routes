@@ -67,6 +67,13 @@ app.patch('/comments/:id', (req, res) => {
     foundComment.comment = newCommentText;
 });
 
+app.get('/comments/:id/edit', (req, res) => {
+    const { id } = req.params;
+    const foundComment = comments.find(c => c.id === id);
+    // Remember we are passing in 'comment' as a parameter in the URL
+    res.render('comments/edit', { comment: foundComment });
+});
+
 app.get('/tacos', (req, res) => {
     res.send('GET /tacos response');
 });
