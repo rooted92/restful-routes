@@ -3,6 +3,7 @@ const app = express();
 const path = require('path');
 // We extracted the v4 method from uuid and aliased it to uuid. This is the same as writing const uuid = require('uuid').v4;
 const { v4: uuid } = require('uuid');
+// Method Override is a package that allows us to use HTTP verbs such as PUT or DELETE in places where the client doesn't support it.
 const methodOverride = require('method-override');
 
 // urlencoded says, anytime a request comes in with urlencoded data, go ahead and parse it for me. Like from a form.
@@ -13,7 +14,7 @@ app.use(methodOverride('_method'));
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
-const comments = [
+let comments = [
     {
         id: uuid(),
         username: 'Todd',
@@ -74,6 +75,14 @@ app.get('/comments/:id/edit', (req, res) => {
     const foundComment = comments.find(c => c.id === id);
     // Remember we are passing in 'comment' as a parameter in the URL
     res.render('comments/edit', { comment: foundComment });
+});
+
+app.delete('/comments/:id', (req, res) => {
+    const { id } = req.params;
+    // We filter out the comment that we want to delete.
+    // We are reassigning the comments array to be all of the comments except for the one with the id that we passed in.
+    comments = comments.filter(c => c.id !== id);
+    res.redirect('/comments');
 });
 
 app.get('/tacos', (req, res) => {
